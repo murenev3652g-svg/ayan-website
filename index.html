@@ -375,7 +375,7 @@
 
   /* ── API URLs ── */
   var MAFU = "https://mafuuu-token-converter.onrender.com/mafu";
-  var ADD  = "https://mafuuuuu-add.vercel.app";
+  var ADD  = "https://mahir-friend-web.vercel.app";
   var INFO = "https://mafuuuu-info-api.vercel.app/mafu-info";
 
   /* ── Helpers ── */
@@ -442,7 +442,7 @@
     if(!pid){R("rFr","Player ID required!",true);return;}
     var auth=authParams("fr");
     if(!auth){R("rFr","Auth info missing!",true);return;}
-    call(ADD+"/mafu-add_friend?"+auth+"&player_id="+encodeURIComponent(pid),"rFr");
+    call(ADD+"/add?uid="+encodeURIComponent(g("fr-uid"))+"&password="+encodeURIComponent(g("fr-pass"))+"&friend_uid="+encodeURIComponent(pid),"rFr");
   };
 
   /* ── REMOVE FRIEND ── */
@@ -451,7 +451,7 @@
     if(!pid){R("rFr","Player ID required!",true);return;}
     var auth=authParams("fr");
     if(!auth){R("rFr","Auth info missing!",true);return;}
-    call(ADD+"/mafu-remove_friend?"+auth+"&player_id="+encodeURIComponent(pid),"rFr");
+    call(ADD+"/remove?uid="+encodeURIComponent(g("fr-uid"))+"&password="+encodeURIComponent(g("fr-pass"))+"&friend_uid="+encodeURIComponent(pid),"rFr");
   };
 
   /* ── USER INFO ── */
