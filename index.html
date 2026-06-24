@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ayan Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --g1:#ff6b00;--g2:#ff003c;--g3:#ffcc00;
+  --dark:#080508;--card:rgba(20,5,10,.92);--brd:rgba(255,107,0,.2);
+  --txt:#f5ddc8;--dim:#7a5a45;--success:#00ff88;--err:#ff2255;
+}
+body{font-family:'Exo 2',sans-serif;background:var(--dark);min-height:100vh;overflow-x:hidden;
+  background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(255,107,0,.15),transparent),
+  radial-gradient(ellipse 60% 40% at 80% 100%,rgba(255,0,60,.1),transparent);}
+body::before{content:"";position:fixed;inset:0;z-index:0;
+  background-image:linear-gradient(rgba(255,107,0,.04)1px,transparent 1px),linear-gradient(90deg,rgba(255,107,0,.04)1px,transparent 1px);
+  background-size:50px 50px;animation:gridMove 20s linear infinite;}
+@keyframes gridMove{to{background-position:50px 50px}}
+body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.08)2px,rgba(0,0,0,.08)4px);}
+.orb{position:fixed;border-radius:50%;z-index:0;pointer-events:none;filter:blur(80px)}
+.o1{width:600px;height:600px;background:radial-gradient(circle,rgba(255,107,0,.18),transparent 70%);top:-200px;left:-200px;animation:op 10s ease-in-out infinite alternate}
+.o2{width:500px;height:500px;background:radial-gradient(circle,rgba(255,0,60,.15),transparent 70%);bottom:-150px;right:-150px;animation:op 13s ease-in-out infinite alternate-reverse}
+.o3{width:300px;height:300px;background:radial-gradient(circle,rgba(255,204,0,.08),transparent 70%);top:40%;left:60%;animation:op 8s ease-in-out infinite alternate}
+@keyframes op{from{opacity:.5;transform:scale(1)}to{opacity:1;transform:scale(1.2)}}
+
+.shell{position:relative;z-index:2;max-width:960px;margin:0 auto;padding:1.2rem 1rem 3rem}
+
+/* ══ MUSIC BAR ══ */
+.music-bar{
+  display:flex;align-items:center;gap:.8rem;
+  background:rgba(255,107,0,.06);border:1px solid rgba(255,107,0,.2);
+  border-radius:1rem;padding:.7rem 1.2rem;margin-bottom:1.5rem;
+  box-shadow:0 0 20px rgba(255,107,0,.06),inset 0 1px 0 rgba(255,107,0,.1);
+  position:relative;overflow:hidden;
+}
+.music-bar::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--g1),var(--g2),var(--g1),transparent);opacity:.5}
+.music-icon{font-size:1.1rem;color:var(--g1);flex-shrink:0;animation:iconSpin 4s linear infinite}
+@keyframes iconSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.music-icon.paused{animation-play-state:paused}
+.music-eq{display:flex;align-items:flex-end;gap:2px;height:18px;flex-shrink:0}
+.music-eq span{display:inline-block;width:3px;background:linear-gradient(0deg,var(--g2),var(--g1),var(--g3));border-radius:2px;animation:eq .7s ease-in-out infinite alternate}
+.music-eq span:nth-child(1){height:6px;animation-delay:0s}
+.music-eq span:nth-child(2){height:14px;animation-delay:.1s}
+.music-eq span:nth-child(3){height:9px;animation-delay:.2s}
+.music-eq span:nth-child(4){height:16px;animation-delay:.05s}
+.music-eq span:nth-child(5){height:7px;animation-delay:.15s}
+.music-eq.paused span{animation-play-state:paused;opacity:.3}
+@keyframes eq{from{transform:scaleY(.25)}to{transform:scaleY(1)}}
+.music-info{flex:1;overflow:hidden}
+.music-title{font-family:'Orbitron',sans-serif;font-size:.7rem;letter-spacing:1.5px;color:var(--g1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.music-sub{font-size:.65rem;color:var(--dim);letter-spacing:1px;margin-top:.15rem}
+.music-btn{
+  background:linear-gradient(135deg,rgba(255,107,0,.15),rgba(255,0,60,.1));
+  border:1px solid rgba(255,107,0,.35);border-radius:.6rem;
+  color:var(--g1);padding:.4rem .9rem;cursor:pointer;transition:all .2s;flex-shrink:0;
+  font-family:'Orbitron',sans-serif;font-weight:700;font-size:.68rem;letter-spacing:1px;
+  display:flex;align-items:center;gap:.4rem;
+}
+.music-btn:hover{background:rgba(255,107,0,.25);box-shadow:0 0 15px rgba(255,107,0,.3)}
+
+/* ══ BANNER ══ */
+.banner{text-align:center;padding:2rem 1rem 1.8rem;position:relative;margin-bottom:1.5rem}
+.banner::after{content:"";display:block;width:80%;height:1px;margin:1.5rem auto 0;
+  background:linear-gradient(90deg,transparent,var(--g1),var(--g2),var(--g1),transparent)}
+.logo-ring{width:120px;height:120px;border-radius:50%;margin:0 auto 1.4rem;
+  border:2px solid transparent;
+  background:linear-gradient(var(--dark),var(--dark))padding-box,linear-gradient(135deg,var(--g1),var(--g2),var(--g3))border-box;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  animation:ringPulse 3s ease-in-out infinite;cursor:pointer}
+.logo-ring img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:none}
+.logo-ring .icon{font-size:3rem;background:linear-gradient(135deg,var(--g1),var(--g2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+@keyframes ringPulse{
+  0%,100%{box-shadow:0 0 0 4px rgba(255,107,0,.15),0 0 40px rgba(255,107,0,.4),0 0 80px rgba(255,0,60,.2)}
+  50%{box-shadow:0 0 0 8px rgba(255,107,0,.08),0 0 60px rgba(255,107,0,.6),0 0 120px rgba(255,0,60,.35)}}
+.banner h1{font-family:'Orbitron',sans-serif;font-size:2.6rem;font-weight:900;letter-spacing:5px;text-transform:uppercase;
+  background:linear-gradient(90deg,var(--g1)0%,var(--g3)40%,var(--g2)100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:hGlow 3s ease-in-out infinite alternate}
+@keyframes hGlow{from{filter:drop-shadow(0 0 10px rgba(255,107,0,.5))}to{filter:drop-shadow(0 0 30px rgba(255,204,0,.7))}}
+.banner .sub{margin-top:.6rem;color:var(--dim);font-size:.82rem;letter-spacing:2px;display:flex;align-items:center;justify-content:center;gap:.7rem;flex-wrap:wrap}
+.badge{background:linear-gradient(135deg,rgba(255,107,0,.1),rgba(255,0,60,.1));border:1px solid rgba(255,107,0,.3);border-radius:20px;padding:.2rem .9rem;font-size:.7rem;color:var(--g1);letter-spacing:1px}
+
+/* Ticker */
+.ticker{display:flex;align-items:center;gap:1rem;background:rgba(255,107,0,.05);border:1px solid rgba(255,107,0,.12);border-radius:.7rem;padding:.55rem 1.2rem;margin-bottom:1.8rem;overflow:hidden}
+.ticker-dot{width:8px;height:8px;border-radius:50%;background:var(--success);flex-shrink:0;animation:blink 1.2s ease-in-out infinite alternate}
+@keyframes blink{from{opacity:.3}to{opacity:1;box-shadow:0 0 8px var(--success)}}
+.ticker-txt{font-size:.72rem;color:var(--dim);letter-spacing:1px;font-family:'Orbitron',sans-serif}
+.ticker-txt span{color:var(--g1)}
+
+/* Grid */
+.grid{display:flex;flex-direction:column;gap:1.8rem}
+
+/* Cards */
+.card{background:var(--card);border:1px solid var(--brd);border-radius:1.5rem;padding:2rem;
+  position:relative;overflow:hidden;transition:transform .3s,border-color .3s,box-shadow .3s;
+  box-shadow:0 8px 40px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,107,0,.08)}
+.card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--g1),var(--g2),var(--g1),transparent);opacity:.6}
+.card::after{content:"";position:absolute;top:-50%;right:-50%;width:100%;height:100%;
+  background:radial-gradient(circle,rgba(255,107,0,.04)0%,transparent 60%);pointer-events:none}
+.card:hover{transform:translateY(-5px);border-color:rgba(255,107,0,.5);
+  box-shadow:0 20px 60px rgba(255,107,0,.15),0 0 0 1px rgba(255,107,0,.1),inset 0 0 40px rgba(255,107,0,.03)}
+.card-corner{position:absolute;top:16px;right:16px;width:40px;height:40px;opacity:.3}
+.card-corner::before,.card-corner::after{content:"";position:absolute;background:var(--g1)}
+.card-corner::before{top:0;right:0;width:100%;height:2px}
+.card-corner::after{top:0;right:0;width:2px;height:100%}
+
+.ch{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem}
+.ch-icon{width:52px;height:52px;border-radius:.8rem;flex-shrink:0;
+  background:linear-gradient(135deg,rgba(255,107,0,.15),rgba(255,0,60,.15));
+  border:1px solid rgba(255,107,0,.3);display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:var(--g1)}
+.ch-info h2{font-family:'Orbitron',sans-serif;font-size:1.05rem;font-weight:700;color:var(--txt);letter-spacing:2px;text-transform:uppercase}
+.ch-info .ep{font-size:.7rem;color:var(--dim);letter-spacing:1px;margin-top:.15rem}
+
+/* Tabs */
+.tabs{display:flex;gap:.5rem;margin-bottom:1.2rem;flex-wrap:wrap;background:rgba(0,0,0,.3);border-radius:.7rem;padding:.4rem}
+.tab{flex:1;min-width:80px;padding:.5rem .8rem;border-radius:.5rem;border:none;
+  background:transparent;color:var(--dim);font-family:'Orbitron',sans-serif;font-size:.65rem;
+  letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.tab:hover{color:var(--txt);background:rgba(255,107,0,.08)}
+.tab.on{background:linear-gradient(135deg,rgba(255,107,0,.2),rgba(255,0,60,.15));color:var(--g1);box-shadow:0 0 15px rgba(255,107,0,.2)}
+.fields{display:none;flex-direction:column;gap:.7rem;margin-bottom:1rem}
+.fields.on{display:flex}
+
+/* Inputs */
+.inp-wrap{position:relative;margin-bottom:1rem}
+.inp-label{font-size:.68rem;color:var(--dim);letter-spacing:1.5px;font-family:'Orbitron',sans-serif;text-transform:uppercase;margin-bottom:.4rem}
+.inp{width:100%;background:rgba(255,107,0,.04);border:1px solid rgba(255,107,0,.15);border-radius:.7rem;
+  padding:.85rem 2.5rem .85rem 1.2rem;font-size:.9rem;color:var(--txt);font-family:'Exo 2',sans-serif;outline:none;transition:all .25s}
+.inp:focus{border-color:var(--g1);background:rgba(255,107,0,.08);box-shadow:0 0 0 3px rgba(255,107,0,.08),0 0 20px rgba(255,107,0,.15)}
+.inp::placeholder{color:var(--dim)}
+.inp-icon{position:absolute;right:1rem;top:50%;transform:translateY(-50%);color:var(--dim);font-size:.85rem;pointer-events:none}
+
+/* Buttons */
+.btn-row{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:.5rem}
+.btn{padding:.85rem 2rem;border-radius:.7rem;border:none;cursor:pointer;
+  font-family:'Orbitron',sans-serif;font-size:.75rem;letter-spacing:1.5px;text-transform:uppercase;
+  display:inline-flex;align-items:center;gap:.6rem;
+  position:relative;overflow:hidden;transition:all .25s;font-weight:700}
+.btn::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15),transparent);opacity:0;transition:opacity .2s}
+.btn:hover::before{opacity:1}
+.btn-primary{background:linear-gradient(135deg,#c24800,#ff6b00);color:#fff;box-shadow:0 4px 24px rgba(255,107,0,.45)}
+.btn-primary:hover{background:linear-gradient(135deg,#ff6b00,#ffaa00);box-shadow:0 6px 32px rgba(255,150,0,.6);transform:translateY(-2px) scale(1.02)}
+.btn-danger{background:linear-gradient(135deg,#8b0020,#ff003c);color:#fff;box-shadow:0 4px 24px rgba(255,0,60,.4)}
+.btn-danger:hover{background:linear-gradient(135deg,#ff003c,#ff6680);box-shadow:0 6px 32px rgba(255,0,60,.6);transform:translateY(-2px) scale(1.02)}
+.btn-info{background:linear-gradient(135deg,#003a6b,#0077cc);color:#fff;box-shadow:0 4px 24px rgba(0,119,204,.4)}
+.btn-info:hover{background:linear-gradient(135deg,#0077cc,#00aaff);box-shadow:0 6px 32px rgba(0,170,255,.6);transform:translateY(-2px) scale(1.02)}
+.btn:active{transform:scale(.96)!important}
+
+/* ══ FRIEND RESULT PANEL ══ */
+.fr-panel{display:none;margin-top:1.3rem;animation:fadeUp .4s cubic-bezier(.22,1,.36,1)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* My info hero */
+.fr-hero{border-radius:1rem;padding:1.2rem 1.3rem;margin-bottom:.9rem;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,rgba(255,107,0,.1),rgba(255,0,60,.07));
+  border:1px solid rgba(255,107,0,.25);box-shadow:0 0 30px rgba(255,107,0,.08)}
+.fr-hero::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--g1),var(--g3),var(--g2),transparent)}
+.fr-hero-inner{display:flex;align-items:center;gap:1rem}
+.fr-avatar{width:56px;height:56px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,rgba(255,107,0,.2),rgba(255,0,60,.2));
+  border:2px solid var(--g1);display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;color:var(--g1);box-shadow:0 0 15px rgba(255,107,0,.35);animation:ringPulse 3s ease-in-out infinite}
+.fr-my-name{font-family:'Orbitron',sans-serif;font-size:1rem;font-weight:700;
+  background:linear-gradient(90deg,var(--g1),var(--g3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.fr-my-uid{font-size:.72rem;color:var(--dim);margin-top:.2rem;letter-spacing:1px}
+.fr-my-uid span{color:var(--g1)}
+
+/* Action result card (add/remove) */
+.fr-action-card{border-radius:.9rem;padding:1.1rem 1.2rem;margin-bottom:.9rem;
+  display:flex;align-items:center;gap:1rem;position:relative;overflow:hidden}
+.fr-action-card.success{background:rgba(0,255,136,.05);border:1px solid rgba(0,255,136,.2);box-shadow:0 0 20px rgba(0,255,136,.06)}
+.fr-action-card.error{background:rgba(255,0,60,.05);border:1px solid rgba(255,0,60,.2);box-shadow:0 0 20px rgba(255,0,60,.06)}
+.fr-action-icon{font-size:1.8rem;flex-shrink:0}
+.fr-action-info{}
+.fr-action-name{font-family:'Orbitron',sans-serif;font-size:.95rem;font-weight:700;color:var(--txt);letter-spacing:1px}
+.fr-action-msg{font-size:.75rem;margin-top:.25rem;letter-spacing:.5px}
+.fr-action-card.success .fr-action-msg{color:var(--success)}
+.fr-action-card.error .fr-action-msg{color:var(--err)}
+.fr-action-meta{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.4rem}
+.fr-meta-badge{padding:.18rem .65rem;border-radius:20px;font-size:.65rem;font-family:'Orbitron',sans-serif;letter-spacing:1px}
+.fr-meta-badge.region{background:rgba(255,107,0,.1);border:1px solid rgba(255,107,0,.25);color:var(--g1)}
+.fr-meta-badge.level{background:rgba(255,204,0,.1);border:1px solid rgba(255,204,0,.25);color:var(--g3)}
+.fr-meta-badge.uid{background:rgba(0,150,255,.1);border:1px solid rgba(0,150,255,.25);color:#5acdff}
+
+/* Loading */
+.fr-loading{display:flex;align-items:center;justify-content:center;gap:1rem;padding:2rem;
+  border:1px solid rgba(255,107,0,.2);border-radius:1rem;background:rgba(255,107,0,.04)}
+.fr-spin-ring{width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,107,0,.15);border-top-color:var(--g1);animation:spin 1s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fr-loading-txt{font-family:'Orbitron',sans-serif;font-size:.72rem;color:var(--dim);letter-spacing:2px}
+
+/* Friend list table */
+.fr-sec-title{font-family:'Orbitron',sans-serif;font-size:.72rem;letter-spacing:2.5px;color:var(--g1);
+  text-transform:uppercase;margin-bottom:.8rem;display:flex;align-items:center;gap:.6rem}
+.fr-sec-title::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(255,107,0,.3),transparent)}
+.fl-box{border-radius:.9rem;overflow:hidden;border:1px solid rgba(255,107,0,.15);margin-bottom:.5rem}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+thead tr{background:rgba(255,107,0,.1);border-bottom:1px solid rgba(255,107,0,.2)}
+th{padding:.65rem 1rem;color:var(--g1);font-family:'Orbitron',sans-serif;letter-spacing:1.5px;font-size:.7rem;text-align:left}
+tbody tr{border-bottom:1px solid rgba(255,107,0,.06);transition:background .2s;animation:rowSlide .3s ease forwards;opacity:0}
+tbody tr:hover{background:rgba(255,107,0,.06)}
+@keyframes rowSlide{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+td{padding:.6rem 1rem;color:var(--txt)}
+.td-num{color:var(--dim);font-size:.76rem}
+.td-uid{color:#e8b87a;font-family:monospace}
+.td-name{display:flex;align-items:center;gap:.5rem}
+.td-name i{color:var(--g1);opacity:.5;font-size:.7rem}
+.fr-total{text-align:center;padding:.6rem;font-family:'Orbitron',sans-serif;font-size:.7rem;color:var(--dim);letter-spacing:1.5px}
+.fr-total span{color:var(--g1)}
+.fr-close-btn{margin-top:.5rem;width:100%;padding:.6rem;background:transparent;border:1px solid rgba(255,107,0,.15);border-radius:.6rem;color:var(--dim);cursor:pointer;font-family:'Orbitron',sans-serif;font-size:.68rem;letter-spacing:1px;transition:all .2s}
+.fr-close-btn:hover{border-color:rgba(255,0,60,.4);color:var(--err)}
+
+/* Error box */
+.fr-err{text-align:center;padding:1.5rem;border:1px solid rgba(255,0,60,.2);border-radius:1rem;
+  background:rgba(255,0,60,.04);color:var(--err);font-family:'Orbitron',sans-serif;font-size:.78rem;letter-spacing:1px}
+.fr-err i{font-size:1.5rem;display:block;margin-bottom:.6rem;opacity:.6}
+
+/* ══ PLAYER INFO PANEL ══ */
+.info-panel{display:none;margin-top:1.4rem;animation:fadeUp .4s cubic-bezier(.22,1,.36,1)}
+.ip-hero{border-radius:1.1rem;padding:1.5rem;margin-bottom:1rem;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,rgba(255,107,0,.12),rgba(255,0,60,.08),rgba(20,5,10,.9));
+  border:1px solid rgba(255,107,0,.3);box-shadow:0 0 40px rgba(255,107,0,.1),inset 0 1px 0 rgba(255,107,0,.15)}
+.ip-hero::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--g1),var(--g3),var(--g2),transparent)}
+.ip-hero-inner{display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap}
+.ip-avatar{width:72px;height:72px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,rgba(255,107,0,.2),rgba(255,0,60,.2));
+  border:2px solid var(--g1);display:flex;align-items:center;justify-content:center;
+  font-size:1.8rem;color:var(--g1);
+  box-shadow:0 0 20px rgba(255,107,0,.4),0 0 40px rgba(255,107,0,.15);animation:ringPulse 3s ease-in-out infinite}
+.ip-name{font-family:'Orbitron',sans-serif;font-size:1.3rem;font-weight:900;letter-spacing:2px;
+  background:linear-gradient(90deg,var(--g1),var(--g3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.ip-uid{font-size:.75rem;color:var(--dim);letter-spacing:1px;margin-top:.2rem}
+.ip-uid span{color:var(--g1)}
+.ip-badges{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem}
+.ip-badge{padding:.2rem .75rem;border-radius:20px;font-size:.68rem;font-family:'Orbitron',sans-serif;letter-spacing:1px;display:flex;align-items:center;gap:.35rem}
+.ip-badge.region{background:rgba(255,107,0,.15);border:1px solid rgba(255,107,0,.3);color:var(--g1)}
+.ip-badge.lang{background:rgba(0,150,255,.12);border:1px solid rgba(0,150,255,.25);color:#5acdff}
+.ip-badge.rank{background:rgba(255,204,0,.1);border:1px solid rgba(255,204,0,.25);color:var(--g3)}
+.ip-sec-title{font-family:'Orbitron',sans-serif;font-size:.72rem;letter-spacing:2.5px;color:var(--g1);
+  text-transform:uppercase;margin-bottom:.8rem;display:flex;align-items:center;gap:.6rem}
+.ip-sec-title::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(255,107,0,.3),transparent)}
+.ip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.8rem;margin-bottom:1rem}
+.ip-stat{background:rgba(255,107,0,.05);border:1px solid rgba(255,107,0,.14);border-radius:.9rem;
+  padding:.9rem 1rem;transition:all .25s;animation:fadeUp .4s ease forwards;opacity:0}
+.ip-stat::before{content:"";display:block;width:100%;height:1px;margin-bottom:.5rem;
+  background:linear-gradient(90deg,transparent,rgba(255,107,0,.4),transparent)}
+.ip-stat:hover{background:rgba(255,107,0,.1);border-color:rgba(255,107,0,.35);transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,107,0,.12)}
+.ip-stat-icon{font-size:.9rem;color:var(--g1);opacity:.7;margin-bottom:.4rem}
+.ip-stat-val{font-family:'Orbitron',sans-serif;font-size:1.05rem;font-weight:700;color:var(--txt);margin-bottom:.15rem}
+.ip-stat-lbl{font-size:.65rem;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase}
+.ip-prog-wrap{margin-bottom:1rem}
+.ip-prog-row{display:flex;justify-content:space-between;margin-bottom:.35rem}
+.ip-prog-lbl{font-size:.72rem;color:var(--dim);letter-spacing:1px}
+.ip-prog-val{font-size:.72rem;color:var(--g1);font-family:'Orbitron',sans-serif}
+.ip-prog-track{height:6px;background:rgba(255,107,0,.1);border-radius:3px;overflow:hidden;border:1px solid rgba(255,107,0,.12)}
+.ip-prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--g2),var(--g1),var(--g3));
+  box-shadow:0 0 8px rgba(255,107,0,.5);animation:progAnim .8s ease forwards;transform-origin:left}
+@keyframes progAnim{from{width:0}to{width:var(--w)}}
+.ip-sig{background:rgba(0,0,0,.3);border:1px solid rgba(255,107,0,.12);border-radius:.8rem;
+  padding:.9rem 1.1rem;margin-bottom:1rem;font-size:.85rem;color:#d4a87a;font-style:italic;letter-spacing:.5px;line-height:1.6;position:relative}
+.ip-sig::before{content:'\201C';position:absolute;top:-8px;left:12px;font-size:2.5rem;color:var(--g1);opacity:.3;font-family:Georgia,serif;line-height:1}
+.ip-pet{background:linear-gradient(135deg,rgba(255,204,0,.07),rgba(255,107,0,.05));
+  border:1px solid rgba(255,204,0,.2);border-radius:.9rem;padding:1rem 1.1rem;margin-bottom:1rem;display:flex;align-items:center;gap:1rem}
+.ip-pet-icon{font-size:2rem;flex-shrink:0}
+.ip-pet-name{font-family:'Orbitron',sans-serif;font-size:.9rem;font-weight:700;color:var(--g3);letter-spacing:1px}
+.ip-pet-sub{font-size:.72rem;color:var(--dim);margin-top:.2rem;letter-spacing:.5px}
+.ip-credit{display:flex;align-items:center;gap:1rem;background:rgba(0,255,136,.05);border:1px solid rgba(0,255,136,.15);border-radius:.9rem;padding:1rem 1.1rem;margin-bottom:1rem}
+.ip-credit-score{font-family:'Orbitron',sans-serif;font-size:2rem;font-weight:900;color:var(--success);flex-shrink:0;text-shadow:0 0 20px rgba(0,255,136,.4)}
+.ip-credit-lbl{font-size:.7rem;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase}
+.ip-credit-sub{font-size:.78rem;color:rgba(0,255,136,.6);margin-top:.2rem}
+.ip-diamond{display:flex;align-items:center;gap:1rem;background:rgba(100,0,255,.06);border:1px solid rgba(150,0,255,.2);border-radius:.9rem;padding:1rem 1.1rem}
+.ip-diamond-val{font-family:'Orbitron',sans-serif;font-size:1.8rem;font-weight:900;color:#c084fc;text-shadow:0 0 20px rgba(150,0,255,.4)}
+.ip-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2.5rem;gap:1rem}
+.ip-loading .spin-ring{width:60px;height:60px;border-radius:50%;border:3px solid rgba(255,107,0,.15);border-top-color:var(--g1);animation:spin 1s linear infinite}
+.ip-loading .spin-txt{font-family:'Orbitron',sans-serif;font-size:.75rem;color:var(--dim);letter-spacing:2px}
+.ip-err{text-align:center;padding:2rem;color:var(--err);font-family:'Orbitron',sans-serif;font-size:.8rem;letter-spacing:1px}
+.ip-err i{font-size:2rem;display:block;margin-bottom:.8rem;opacity:.5}
+
+/* ══ TOKEN DESC ══ */
+.tok-desc{
+  background:rgba(255,107,0,.04);border:1px solid rgba(255,107,0,.12);
+  border-radius:.9rem;padding:1rem 1.1rem;margin-bottom:1.2rem;
+}
+.tok-desc-title{font-family:'Orbitron',sans-serif;font-size:.7rem;letter-spacing:1.5px;color:var(--g1);margin-bottom:.8rem;display:flex;align-items:center;gap:.5rem}
+.tok-desc-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.tok-desc-item{display:flex;align-items:flex-start;gap:.6rem;padding:.5rem .6rem;border-radius:.6rem;background:rgba(0,0,0,.2);border:1px solid rgba(255,107,0,.07);transition:all .2s}
+.tok-desc-item:hover{background:rgba(255,107,0,.07);border-color:rgba(255,107,0,.2)}
+.tok-desc-icon{font-size:1rem;flex-shrink:0;margin-top:.05rem}
+.tok-desc-name{font-family:'Orbitron',sans-serif;font-size:.65rem;letter-spacing:1px;color:var(--txt);margin-bottom:.15rem}
+.tok-desc-sub{font-size:.62rem;color:var(--dim);line-height:1.4}
+/* ══ TOKEN ROWS ══ */
+.tok-row{
+  border:1px solid rgba(255,107,0,.15);border-radius:.9rem;padding:.9rem 1.1rem;
+  margin-bottom:.7rem;background:rgba(255,107,0,.04);
+  animation:fadeUp .4s ease forwards;opacity:0;transition:all .25s;
+}
+.tok-row:hover{background:rgba(255,107,0,.08);border-color:rgba(255,107,0,.3)}
+.tok-row-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;gap:.5rem;flex-wrap:wrap}
+.tok-lbl{font-family:'Orbitron',sans-serif;font-size:.7rem;letter-spacing:1.5px;display:flex;align-items:center;gap:.4rem}
+.tok-copy{
+  background:rgba(255,107,0,.1);border:1px solid rgba(255,107,0,.25);border-radius:.45rem;
+  color:var(--g1);padding:.25rem .75rem;cursor:pointer;font-family:'Orbitron',sans-serif;
+  font-size:.65rem;letter-spacing:1px;transition:all .2s;display:flex;align-items:center;gap:.35rem;flex-shrink:0;
+}
+.tok-copy:hover{background:rgba(255,107,0,.25);box-shadow:0 0 12px rgba(255,107,0,.3)}
+.tok-val{
+  font-family:'Courier New',monospace;font-size:.75rem;color:#d4a87a;
+  word-break:break-all;line-height:1.5;
+  background:rgba(0,0,0,.25);border-radius:.5rem;padding:.5rem .7rem;
+  border:1px solid rgba(255,107,0,.08);
+}
+/* Misc */
+.divider{border:none;border-top:1px solid rgba(255,107,0,.1);margin:2rem 0}
+.foot{text-align:center;color:var(--dim);font-size:.78rem;letter-spacing:1.5px;font-family:'Orbitron',sans-serif;padding:.5rem}
+.foot span{background:linear-gradient(90deg,var(--g1),var(--g2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.dots{display:inline-flex;gap:3px;margin-left:.5rem}
+.dots span{width:5px;height:5px;border-radius:50%;background:var(--g1);animation:dotAnim .8s ease-in-out infinite alternate}
+.dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
+@keyframes dotAnim{from{opacity:.2;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+@media(max-width:600px){.banner h1{font-size:1.8rem;letter-spacing:2px}.card{padding:1.4rem}.btn{padding:.75rem 1.3rem;font-size:.68rem}.ip-grid{grid-template-columns:1fr 1fr}}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:rgba(255,107,0,.25);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="o1 orb"></div><div class="o2 orb"></div><div class="o3 orb"></div>
+<audio id="bgAudio" loop><source src="music.mp3" type="audio/mpeg"></audio>
+
+<div class="shell">
+
+  <!-- ══ MUSIC BAR ══ -->
+  <div class="music-bar">
+    <i class="fas fa-compact-disc music-icon paused" id="musicDisc"></i>
+    <div class="music-eq paused" id="musicEq">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div class="music-info">
+      <div class="music-title" id="musicTitle">♪ AYAN HUB — BGM</div>
+      <div class="music-sub">Click PLAY to start music</div>
+    </div>
+    <button class="music-btn" id="musicBtn">
+      <i class="fas fa-play" id="musicIcon"></i>
+      <span id="musicLbl">PLAY</span>
+    </button>
+  </div>
+
+  <!-- ══ BANNER ══ -->
+  <div class="banner">
+    <div class="logo-ring">
+      <div class="logo-orbit"></div>
+      <div class="logo-orbit2"></div>
+      <div class="logo-inner">
+        <i class="fas fa-fire icon" id="logoIcon"></i>
+        <img id="logoImg" src="pic.jpg" alt="">
+      </div>
+    </div>
+    <h1>Ayan Hub</h1>
+    <div class="sub">
+      <i class="fas fa-bolt" style="color:var(--g1)"></i>
+      <span>by Ayan</span>
+      <span class="badge"><i class="fas fa-code"></i> ayan_offcial</span>
+      <span class="badge" style="border-color:rgba(255,204,0,.3);color:var(--g3)"><i class="fas fa-crown"></i> VIP PRO</span>
+    </div>
+  </div>
+
+  <div class="ticker">
+    <div class="ticker-dot"></div>
+    <div class="ticker-txt">SYSTEM ONLINE &nbsp;•&nbsp; <span>API READY</span> &nbsp;•&nbsp; VERSION <span>4.0</span> &nbsp;•&nbsp; AYAN HUB: <span>ACTIVE</span></div>
+  </div>
+
+  <div class="grid">
+
+    <!-- ══ TOKEN GENERATOR CARD ══ -->
+    <div class="card">
+      <div class="card-corner"></div>
+      <div class="ch">
+        <div class="ch-icon"><i class="fas fa-key"></i></div>
+        <div class="ch-info"><h2>Token Generator</h2><div class="ep">/ token-endpoint &nbsp;•&nbsp; BMW API</div></div>
+      </div>
+      <div class="tok-desc">
+        <div class="tok-desc-title"><i class="fas fa-info-circle"></i> কী কী Generate হবে?</div>
+        <div class="tok-desc-grid">
+          <div class="tok-desc-item"><span class="tok-desc-icon" style="color:var(--g3)"><i class="fas fa-key"></i></span><div><div class="tok-desc-name">JWT Token</div><div class="tok-desc-sub">Full authentication token for API access</div></div></div>
+          <div class="tok-desc-item"><span class="tok-desc-icon" style="color:var(--g1)"><i class="fas fa-lock-open"></i></span><div><div class="tok-desc-name">Access Token</div><div class="tok-desc-sub">Short access key for quick requests</div></div></div>
+          <div class="tok-desc-item"><span class="tok-desc-icon" style="color:#5acdff"><i class="fas fa-hashtag"></i></span><div><div class="tok-desc-name">Account UID</div><div class="tok-desc-sub">Your unique account identifier</div></div></div>
+          <div class="tok-desc-item"><span class="tok-desc-icon" style="color:#c084fc"><i class="fas fa-id-card"></i></span><div><div class="tok-desc-name">Open ID</div><div class="tok-desc-sub">External platform open ID hash</div></div></div>
+          <div class="tok-desc-item"><span class="tok-desc-icon" style="color:var(--success)"><i class="fas fa-server"></i></span><div><div class="tok-desc-name">Base URL</div><div class="tok-desc-sub">Game server base endpoint URL</div></div></div>
+          <div class="tok-desc-item"><span class="tok-desc-icon" style="color:var(--g2)"><i class="fas fa-globe-asia"></i></span><div><div class="tok-desc-name">Region</div><div class="tok-desc-sub">Account server region (BD/IND etc)</div></div></div>
+        </div>
+      </div>
+      <div class="inp-wrap">
+        <div class="inp-label">Guest UID</div>
+        <input class="inp" id="tok-uid" placeholder="Enter Guest UID...">
+        <i class="fas fa-hashtag inp-icon"></i>
+      </div>
+      <div class="inp-wrap">
+        <div class="inp-label">Password</div>
+        <input class="inp" id="tok-pass" type="password" placeholder="Enter Password...">
+        <i class="fas fa-shield-alt inp-icon"></i>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="tokBtn"><i class="fas fa-bolt"></i> Generate Tokens</button>
+      </div>
+      <div class="fr-panel" id="tokPanel"></div>
+    </div>
+
+    <!-- ══ FRIEND MANAGER ══ -->
+    <div class="card">
+      <div class="card-corner"></div>
+      <div class="ch">
+        <div class="ch-icon"><i class="fas fa-users"></i></div>
+        <div class="ch-info"><h2>Friend Manager</h2><div class="ep">/ friend-endpoint &nbsp;•&nbsp; MAHIR API</div></div>
+      </div>
+      <div class="tabs">
+        <button class="tab on" data-card="fr" data-m="guest"><i class="fas fa-user-secret"></i> Guest</button>
+        <button class="tab" data-card="fr" data-m="jwt"><i class="fas fa-key"></i> JWT</button>
+        <button class="tab" data-card="fr" data-m="access"><i class="fas fa-lock-open"></i> Access</button>
+      </div>
+      <div class="fields on" id="fr-guest">
+        <div class="inp-wrap"><div class="inp-label">Your UID</div><input class="inp" id="fr-uid" placeholder="Enter Your UID..."><i class="fas fa-hashtag inp-icon"></i></div>
+        <div class="inp-wrap"><div class="inp-label">Password</div><input class="inp" id="fr-pass" type="password" placeholder="Enter Password..."><i class="fas fa-shield-alt inp-icon"></i></div>
+      </div>
+      <div class="fields" id="fr-jwt">
+        <div class="inp-wrap"><div class="inp-label">JWT Token</div><input class="inp" id="fr-jwt-val" placeholder="Paste JWT Token..."><i class="fas fa-key inp-icon"></i></div>
+      </div>
+      <div class="fields" id="fr-access">
+        <div class="inp-wrap"><div class="inp-label">Access Token</div><input class="inp" id="fr-access-val" placeholder="Paste Access Token..."><i class="fas fa-lock-open inp-icon"></i></div>
+      </div>
+      <div class="inp-wrap"><div class="inp-label">Target Friend UID</div><input class="inp" id="fr-pid" placeholder="Enter Friend UID to Add/Remove..."><i class="fas fa-crosshairs inp-icon"></i></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="addBtn"><i class="fas fa-user-plus"></i> Add</button>
+        <button class="btn btn-danger" id="remBtn"><i class="fas fa-user-minus"></i> Remove</button>
+        <button class="btn btn-info" id="listBtn"><i class="fas fa-list-ul"></i> Friend List</button>
+      </div>
+      <div class="fr-panel" id="frPanel"></div>
+    </div>
+
+    <!-- ══ PLAYER INFO ══ -->
+    <div class="card">
+      <div class="card-corner"></div>
+      <div class="ch">
+        <div class="ch-icon"><i class="fas fa-search"></i></div>
+        <div class="ch-info"><h2>Player Info</h2><div class="ep">/ info-endpoint &nbsp;•&nbsp; MAFU INFO API</div></div>
+      </div>
+      <div class="inp-wrap">
+        <div class="inp-label">Player UID</div>
+        <input class="inp" id="infoUid" placeholder="Enter Player UID...">
+        <i class="fas fa-gamepad inp-icon"></i>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary" id="infoBtn"><i class="fas fa-satellite-dish"></i> Fetch Info</button></div>
+      <div class="info-panel" id="infoPanel"></div>
+    </div>
+
+  </div>
+  <hr class="divider">
+  <div class="foot">Crafted with <span>♥</span> by <span>AYAN</span> &nbsp;•&nbsp; <span>ayan_offcial</span></div>
+</div>
+
+<script>
+(function(){
+  var API={
+    friend:atob("aHR0cHM6Ly9tYWhpci1mcmllbmQtd2ViLnZlcmNlbC5hcHA="),
+    info:atob("aHR0cHM6Ly9tYWZ1dXV1dS1pbmZvLWFwaS52ZXJjZWwuYXBwL21hZnUtaW5mbw==")
+  };
+  var TOK_BASE=atob("aHR0cDovLzE4Ny4xMjcuMTc1LjIwODo1MDAxL0Jtdw==");
+
+  var li=document.getElementById("logoImg");
+  li.onload=function(){li.style.display="block";document.getElementById("logoIcon").style.display="none";};
+  li.onerror=function(){li.style.display="none";};
+
+  function v(id){return document.getElementById(id).value.trim();}
+  function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+  /* ══ MUSIC ══ */
+  var audio=document.getElementById("bgAudio");
+  var playing=false;
+  var disc=document.getElementById("musicDisc");
+  var eq=document.getElementById("musicEq");
+  var mIcon=document.getElementById("musicIcon");
+  var mLbl=document.getElementById("musicLbl");
+  var mTitle=document.getElementById("musicTitle");
+
+  function setMusicUI(on){
+    playing=on;
+    if(on){
+      disc.classList.remove("paused");
+      eq.classList.remove("paused");
+      mIcon.className="fas fa-pause";
+      mLbl.textContent="PAUSE";
+      mTitle.textContent="♪ Now Playing — BGM";
+    }else{
+      disc.classList.add("paused");
+      eq.classList.add("paused");
+      mIcon.className="fas fa-play";
+      mLbl.textContent="PLAY";
+      mTitle.textContent="♪ Music Paused";
+    }
+  }
+
+  document.getElementById("musicBtn").addEventListener("click",function(){
+    if(playing){audio.pause();setMusicUI(false);}
+    else{audio.play().then(function(){setMusicUI(true);}).catch(function(){});}
+  });
+
+  /* Auto-play on first interaction */
+  var autoTried=false;
+  function tryAutoPlay(){
+    if(!autoTried&&!playing){
+      autoTried=true;
+      audio.play().then(function(){setMusicUI(true);}).catch(function(){});
+    }
+  }
+  document.addEventListener("click",tryAutoPlay,{once:true});
+  document.addEventListener("touchstart",tryAutoPlay,{once:true});
+
+  /* ══ TABS ══ */
+  document.querySelectorAll(".tab").forEach(function(t){
+    t.addEventListener("click",function(){
+      var card=this.dataset.card,m=this.dataset.m;
+      document.querySelectorAll('.tab[data-card="'+card+'"]').forEach(function(x){x.classList.remove("on");});
+      document.querySelectorAll('[id^="'+card+'-"]').forEach(function(f){if(f.classList.contains("fields"))f.classList.remove("on");});
+      this.classList.add("on");
+      var el=document.getElementById(card+"-"+m);if(el)el.classList.add("on");
+    });
+  });
+
+  function authOf(card){
+    var m=document.querySelector('.tab.on[data-card="'+card+'"]').dataset.m;
+    if(m==="guest"){var u=v(card+"-uid"),p=v(card+"-pass");return(u&&p)?"uid="+encodeURIComponent(u)+"&password="+encodeURIComponent(p):null;}
+    else if(m==="jwt"){var j=v(card+"-jwt-val");return j?"jwt_token="+encodeURIComponent(j):null;}
+    else{var a=v(card+"-access-val");return a?"access_token="+encodeURIComponent(a):null;}
+  }
+
+  /* ══ LOADING HTML ══ */
+  function loadingHTML(msg){
+    return '<div class="fr-loading"><div class="fr-spin-ring"></div>'
+      +'<div class="fr-loading-txt">'+msg+'<span class="dots"><span></span><span></span><span></span></span></div></div>';
+  }
+
+  /* ══ TOKEN GENERATOR ══ */
+  var TOK_API = TOK_BASE;
+
+  document.getElementById("tokBtn").onclick = function(){
+    var uid = v("tok-uid"), pass = v("tok-pass");
+    if(!uid){ renderSimpleErr("tokPanel","Guest UID is required!"); return; }
+    if(!pass){ renderSimpleErr("tokPanel","Password is required!"); return; }
+    var panel = document.getElementById("tokPanel");
+    panel.style.display = "block";
+    panel.innerHTML = loadingHTML("GENERATING TOKENS");
+    var url = TOK_API + "?uid=" + encodeURIComponent(uid) + "&password=" + encodeURIComponent(pass);
+    fetch("/api/proxy?url=" + encodeURIComponent(url))
+    .then(function(r){ return r.text(); })
+    .then(function(t){
+      try{
+        var d = JSON.parse(t);
+        if(d.status !== "success"){ renderSimpleErr("tokPanel", "Failed: " + (d.message||t.substring(0,150))); return; }
+        panel.innerHTML = renderTokenPanel(d);
+        /* copy buttons */
+        panel.querySelectorAll(".tok-copy").forEach(function(btn){
+          btn.addEventListener("click", function(){
+            var val = this.dataset.val;
+            navigator.clipboard.writeText(val).then(function(){
+              btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+              btn.style.color = "var(--success)";
+              setTimeout(function(){ btn.innerHTML='<i class="fas fa-copy"></i> Copy'; btn.style.color=""; }, 2000);
+            }).catch(function(){
+              /* fallback */
+              var ta = document.createElement("textarea");
+              ta.value = val; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
+              btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+              setTimeout(function(){ btn.innerHTML='<i class="fas fa-copy"></i> Copy'; }, 2000);
+            });
+          });
+        });
+      } catch(e){ renderSimpleErr("tokPanel","Parse Error: " + t.substring(0,200)); }
+    }).catch(function(e){ renderSimpleErr("tokPanel","Network Error: " + e.message); });
+  };
+
+  function renderTokenPanel(d){
+    var html = "";
+    /* Account hero */
+    html += '<div class="fr-hero"><div class="fr-hero-inner">';
+    html += '<div class="fr-avatar"><i class="fas fa-user-shield"></i></div>';
+    html += '<div>';
+    html += '<div class="fr-my-name">Account #' + esc(d.uid||d.account_uid||"") + '</div>';
+    html += '<div class="fr-my-uid">Region: <span>' + esc(d.region||"—") + '</span> &nbsp;•&nbsp; Status: <span>' + esc(d.status||"") + '</span></div>';
+    html += '</div></div></div>';
+
+    /* Token rows */
+    var tokens = [
+      { label:"JWT Token",    icon:"fas fa-key",      val: d.jwt_token,    color:"var(--g3)" },
+      { label:"Access Token", icon:"fas fa-lock-open", val: d.access_token, color:"var(--g1)" },
+      { label:"Account UID",  icon:"fas fa-hashtag",  val: d.account_uid,  color:"#5acdff"   },
+      { label:"Open ID",      icon:"fas fa-id-card",  val: d.open_id,      color:"#c084fc"   },
+      { label:"Base URL",     icon:"fas fa-server",   val: d.base_url,     color:"var(--success)" },
+    ];
+
+    tokens.forEach(function(tk, i){
+      if(!tk.val) return;
+      html += '<div class="tok-row" style="animation-delay:'+(i*60)+'ms">';
+      html += '<div class="tok-row-head">';
+      html += '<span class="tok-lbl" style="color:'+tk.color+'"><i class="'+tk.icon+'"></i> '+tk.label+'</span>';
+      html += '<button class="tok-copy" data-val="'+esc(String(tk.val))+'"><i class="fas fa-copy"></i> Copy</button>';
+      html += '</div>';
+      html += '<div class="tok-val">'+esc(String(tk.val))+'</div>';
+      html += '</div>';
+    });
+
+    return html;
+  }
+
+  /* ══ ADD FRIEND ══ */
+  document.getElementById("addBtn").onclick=function(){
+    var pid=v("fr-pid");if(!pid){renderSimpleErr("frPanel","Target Friend UID required!");return;}
+    var uid=v("fr-uid"),pass=v("fr-pass");if(!uid||!pass){renderSimpleErr("frPanel","UID and Password required!");return;}
+    var panel=document.getElementById("frPanel");panel.style.display="block";
+    panel.innerHTML=loadingHTML("SENDING FRIEND REQUEST");
+    fetch("/api/proxy?url="+encodeURIComponent(API.friend+"/add_friend?uid="+encodeURIComponent(uid)+"&password="+encodeURIComponent(pass)+"&friend_uid="+encodeURIComponent(pid)))
+    .then(function(r){return r.text().then(function(t){return{s:r.status,t:t};});})
+    .then(function(res){renderFriendAction("frPanel",res,"add");})
+    .catch(function(e){renderSimpleErr("frPanel","Network Error: "+e.message);});
+  };
+
+  /* ══ REMOVE FRIEND ══ */
+  document.getElementById("remBtn").onclick=function(){
+    var pid=v("fr-pid");if(!pid){renderSimpleErr("frPanel","Target Friend UID required!");return;}
+    var uid=v("fr-uid"),pass=v("fr-pass");if(!uid||!pass){renderSimpleErr("frPanel","UID and Password required!");return;}
+    var panel=document.getElementById("frPanel");panel.style.display="block";
+    panel.innerHTML=loadingHTML("REMOVING FRIEND");
+    fetch("/api/proxy?url="+encodeURIComponent(API.friend+"/remove_friend?uid="+encodeURIComponent(uid)+"&password="+encodeURIComponent(pass)+"&friend_uid="+encodeURIComponent(pid)))
+    .then(function(r){return r.text().then(function(t){return{s:r.status,t:t};});})
+    .then(function(res){renderFriendAction("frPanel",res,"remove");})
+    .catch(function(e){renderSimpleErr("frPanel","Network Error: "+e.message);});
+  };
+
+  function renderFriendAction(panelId,res,type){
+    var panel=document.getElementById(panelId);
+    try{
+      var d=JSON.parse(res.t);
+      var ok=d.status==="success"||res.s===200||["success","sent","removed"].some(function(w){return res.t.toLowerCase().includes(w);});
+      var nick=d.nickname||d.name||"";
+      var msg=d.message||(ok?(type==="add"?"Friend request sent!":"Removed successfully!"):"Operation failed");
+      panel.innerHTML=renderActionCard(ok,nick||"Player",msg,{
+        uid:d.uid||"",region:d.region||"",level:d.level||""
+      });
+    }catch(e){
+      var ok2=["success","sent","removed"].some(function(w){return res.t.toLowerCase().includes(w);});
+      panel.innerHTML=renderActionCard(ok2,"Response","["+res.s+"] "+res.t.substring(0,200),{});
+    }
+  }
+
+  function renderActionCard(ok,name,msg,meta){
+    var icon=ok?"✅":"❌";
+    var cl=ok?"success":"error";
+    var h='<div class="fr-action-card '+cl+'">';
+    h+='<div class="fr-action-icon">'+icon+'</div>';
+    h+='<div class="fr-action-info">';
+    h+='<div class="fr-action-name">'+esc(name)+'</div>';
+    h+='<div class="fr-action-msg">'+esc(msg)+'</div>';
+    if(meta.uid||meta.region||meta.level){
+      h+='<div class="fr-action-meta">';
+      if(meta.uid) h+='<span class="fr-meta-badge uid"><i class="fas fa-hashtag"></i>'+esc(meta.uid)+'</span>';
+      if(meta.region) h+='<span class="fr-meta-badge region"><i class="fas fa-globe-asia"></i>'+esc(meta.region)+'</span>';
+      if(meta.level) h+='<span class="fr-meta-badge level"><i class="fas fa-star"></i>Lv '+esc(meta.level)+'</span>';
+      h+='</div>';
+    }
+    h+='</div></div>';
+    return h;
+  }
+
+  /* ══ FRIEND LIST ══ */
+  document.getElementById("listBtn").onclick=function(){
+    var uid=v("fr-uid"),pass=v("fr-pass");if(!uid||!pass){renderSimpleErr("frPanel","UID and Password required!");return;}
+    var panel=document.getElementById("frPanel");panel.style.display="block";
+    panel.innerHTML=loadingHTML("LOADING FRIEND LIST");
+    fetch("/api/proxy?url="+encodeURIComponent(API.friend+"/friend_list?uid="+encodeURIComponent(uid)+"&password="+encodeURIComponent(pass)+"&friend_uid="+encodeURIComponent(uid)))
+    .then(function(r){return r.text();})
+    .then(function(t){
+      try{
+        var d=JSON.parse(t);
+        var myInfo=d.my_info||{};
+        var list=d.friends||d.friend_list||(Array.isArray(d)?d:[]);
+        var total=d.total_friends||list.length;
+        var html="";
+
+        /* My Info hero */
+        if(myInfo.name||myInfo.uid){
+          html+='<div class="fr-hero"><div class="fr-hero-inner">';
+          html+='<div class="fr-avatar"><i class="fas fa-user"></i></div>';
+          html+='<div>';
+          html+='<div class="fr-my-name">'+esc(myInfo.name||"You")+'</div>';
+          html+='<div class="fr-my-uid">UID: <span>'+esc(myInfo.uid||uid)+'</span></div>';
+          html+='</div></div></div>';
+        }
+
+        /* Friend table */
+        html+='<div class="fr-sec-title"><i class="fas fa-users"></i> Friends</div>';
+        if(!list.length){
+          html+='<div class="fr-err"><i class="fas fa-user-slash"></i>No friends found</div>';
+        }else{
+          html+='<div class="fl-box"><table>';
+          html+='<thead><tr><th>#</th><th>UID</th><th>Name</th></tr></thead><tbody>';
+          html+=list.map(function(f,i){
+            var fu=f.uid||f.account_id||f.id||"-";
+            var fn=f.name||f.nickname||f.playerName||(f.BasicInfo&&f.BasicInfo.Nickname)||"-";
+            return '<tr style="animation-delay:'+(i*40)+'ms"><td class="td-num">'+(i+1)+'</td><td class="td-uid">'+esc(fu)+'</td><td class="td-name"><i class="fas fa-user"></i>'+esc(fn)+'</td></tr>';
+          }).join("");
+          html+='</tbody></table></div>';
+          html+='<div class="fr-total">Total Friends: <span>'+total+'</span></div>';
+        }
+        html+='<button class="fr-close-btn" onclick="document.getElementById(\'frPanel\').style.display=\'none\'"><i class="fas fa-times"></i> Close</button>';
+        panel.innerHTML=html;
+      }catch(e){renderSimpleErr("frPanel","Parse Error: "+t.substring(0,200));}
+    }).catch(function(e){renderSimpleErr("frPanel","Network Error: "+e.message);});
+  };
+
+  function renderSimpleErr(panelId,msg){
+    var p=document.getElementById(panelId);p.style.display="block";
+    p.innerHTML='<div class="fr-err"><i class="fas fa-exclamation-triangle"></i>'+esc(msg)+'</div>';
+  }
+
+  /* ══ PLAYER INFO ══ */
+  document.getElementById("infoBtn").onclick=function(){
+    var uid=v("infoUid");if(!uid){renderInfoErr("Please enter a UID!");return;}
+    var panel=document.getElementById("infoPanel");panel.style.display="block";
+    panel.innerHTML='<div class="ip-loading"><div class="spin-ring"></div><div class="spin-txt">FETCHING PLAYER DATA<span class="dots"><span></span><span></span><span></span></span></div></div>';
+    fetch("/api/proxy?url="+encodeURIComponent(API.info+"?uid="+encodeURIComponent(uid)))
+    .then(function(r){return r.text();})
+    .then(function(t){
+      try{renderInfo(JSON.parse(t));}
+      catch(e){renderInfoErr("Parse Error: "+t.substring(0,300));}
+    }).catch(function(e){renderInfoErr("Network Error: "+e.message);});
+  };
+
+  function renderInfoErr(msg){
+    var p=document.getElementById("infoPanel");p.style.display="block";
+    p.innerHTML='<div class="ip-err"><i class="fas fa-times-circle"></i>'+esc(msg)+'</div>';
+  }
+
+  function renderInfo(d){
+    var panel=document.getElementById("infoPanel");
+    var B=d.basicInfo||d.BasicInfo||d.basic_info||d.player||d||{};
+    var S=d.socialInfo||d.SocialInfo||d.social_info||{};
+    var G=d.guildinfoData||d.guildInfo||d.GuildInfo||d.guild_info||{};
+    var PET=d.petInfo||d.PetInfo||d.pet_info||{};
+    var CREDIT=d.creditScoreInfo||d.CreditScore||d.credit_score_info||{};
+    var DIAMOND=d.diamondCostRes||d.diamondCost||d.diamond_cost||{};
+    var nick=B.nickname||B.Nickname||B.name||B.playerName||S.accountId||d.nickname||"—";
+    var accountId=S.accountId||B.accountId||B.uid||B.account_id||d.uid||"—";
+    var region=B.region||B.Region||d.region||S.region||"—";
+    var level=B.level||B.Level||d.level||"—";
+    var exp=B.exp||B.Exp||d.exp||"—";
+    var likes=B.liked||B.Liked||B.likes||d.likes||"—";
+    var bp=B.badgePoint||B.BadgePoint||B.badge_point||"—";
+    var ranking=B.rankingPoints||B.ranking||B.rank||"—";
+    var bio=S.signature||S.bio||d.signature||d.bio||"";
+    var lang=(S.language||"").replace("Language_","");
+    var rankShow=(S.rankShow||"").replace("RankShow_","");
+    var creditScore=CREDIT.creditScore||CREDIT.credit_score||CREDIT.score||"—";
+    var diamondCost=DIAMOND.diamondCost||DIAMOND.diamond_cost||DIAMOND.cost||"—";
+    var petName=PET.name||PET.petName||"—";
+    var petLevel=PET.level||"—";
+    var petExp=PET.exp||"—";
+    var guildName=G.guildName||G.guild_name||G.name||"—";
+    var guildLevel=G.guildLevel||G.guild_level||G.level||"—";
+    var expMax=level!=="—"?level*1200:1200;
+    var expPct=exp!=="—"?Math.min(100,Math.round((exp/expMax)*100)):0;
+    var html="";
+    /* Hero */
+    html+='<div class="ip-hero"><div class="ip-hero-inner">';
+    html+='<div class="ip-avatar"><i class="fas fa-user"></i></div>';
+    html+='<div><div class="ip-name">'+esc(nick)+'</div>';
+    html+='<div class="ip-uid">UID: <span>'+esc(accountId)+'</span></div>';
+    html+='<div class="ip-badges">';
+    if(region!=="—")html+='<span class="ip-badge region"><i class="fas fa-globe-asia"></i>'+esc(region)+'</span>';
+    if(lang)html+='<span class="ip-badge lang"><i class="fas fa-language"></i>'+esc(lang)+'</span>';
+    if(rankShow)html+='<span class="ip-badge rank"><i class="fas fa-trophy"></i>'+esc(rankShow)+'</span>';
+    html+='</div></div></div></div>';
+    if(bio)html+='<div class="ip-sig">'+esc(bio)+'</div>';
+    /* Stats */
+    html+='<div class="ip-sec-title"><i class="fas fa-chart-bar"></i> Player Stats</div><div class="ip-grid">';
+    [{icon:"fas fa-star",val:level,lbl:"Level",d:0},{icon:"fas fa-bolt",val:exp,lbl:"EXP",d:60},
+     {icon:"fas fa-heart",val:likes,lbl:"Likes",d:120},{icon:"fas fa-medal",val:bp,lbl:"Badge Pts",d:180},
+     {icon:"fas fa-crown",val:ranking,lbl:"Ranking",d:240}].forEach(function(s){
+      if(s.val!=="—"&&s.val!==undefined)
+        html+='<div class="ip-stat" style="animation-delay:'+s.d+'ms"><div class="ip-stat-icon"><i class="'+s.icon+'"></i></div><div class="ip-stat-val">'+esc(s.val)+'</div><div class="ip-stat-lbl">'+s.lbl+'</div></div>';
+    });
+    html+='</div>';
+    if(exp!=="—"){html+='<div class="ip-prog-wrap"><div class="ip-prog-row"><span class="ip-prog-lbl">EXP Progress</span><span class="ip-prog-val">'+expPct+'%</span></div><div class="ip-prog-track"><div class="ip-prog-fill" style="--w:'+expPct+'%"></div></div></div>';}
+    if(guildName!=="—"){
+      html+='<div class="ip-sec-title" style="margin-top:.4rem"><i class="fas fa-shield-alt"></i> Guild</div><div class="ip-grid">';
+      html+='<div class="ip-stat" style="animation-delay:0ms"><div class="ip-stat-icon"><i class="fas fa-flag"></i></div><div class="ip-stat-val">'+esc(guildName)+'</div><div class="ip-stat-lbl">Guild Name</div></div>';
+      if(guildLevel!=="—")html+='<div class="ip-stat" style="animation-delay:60ms"><div class="ip-stat-icon"><i class="fas fa-layer-group"></i></div><div class="ip-stat-val">'+esc(guildLevel)+'</div><div class="ip-stat-lbl">Guild Level</div></div>';
+      html+='</div>';
+    }
+    if(petName!=="—"){html+='<div class="ip-sec-title" style="margin-top:.4rem"><i class="fas fa-paw"></i> Pet Info</div><div class="ip-pet"><div class="ip-pet-icon">🐾</div><div><div class="ip-pet-name">'+esc(petName)+'</div><div class="ip-pet-sub">Level '+esc(petLevel)+' &nbsp;•&nbsp; EXP '+esc(petExp)+'</div></div></div>';}
+    if(creditScore!=="—"){html+='<div class="ip-sec-title" style="margin-top:.4rem"><i class="fas fa-star-half-alt"></i> Credit Score</div><div class="ip-credit"><div class="ip-credit-score">'+esc(creditScore)+'</div><div><div class="ip-credit-lbl">Credit Score</div><div class="ip-credit-sub">Account Trust Rating</div></div></div>';}
+    if(diamondCost!=="—"){html+='<div class="ip-sec-title" style="margin-top:.4rem"><i class="fas fa-gem"></i> Diamond Info</div><div class="ip-diamond"><div class="ip-diamond-val">💎 '+esc(diamondCost)+'</div><div><div class="ip-credit-lbl">Diamond Cost</div><div class="ip-credit-sub">Top-Up Requirement</div></div></div>';}
+    panel.innerHTML=html;panel.style.display="block";
+  }
+})();
+</script>
+</body>
+</html>
